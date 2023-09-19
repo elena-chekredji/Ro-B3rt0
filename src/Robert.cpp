@@ -13,8 +13,11 @@ the L293D chip
 #define DIRB 4
 
 
+
+
 int i;
-int IR1 = 10;
+int IR_LEFT = 10;
+int IR_RIGHT = 11;
 int LED = 13;
 
 void turn_left();
@@ -26,7 +29,8 @@ void sethi();
 void setup() {
   Serial.begin(9600);
   Serial.print("Start! \n");
-  pinMode(IR1, INPUT);
+  pinMode(IR_LEFT, INPUT);
+  pinMode(IR_RIGHT, INPUT);
   pinMode(LED, OUTPUT);
   //---set pin direction
   //sethi();
@@ -37,13 +41,13 @@ void setup() {
   //delay(10000);
 }
 void sethi(){
-  for(i=0; i< 11; i++){
+  for(i=0; i< 9; i++){
   pinMode(i, HIGH);
   analogWrite(i, 150);
 }
 }
 void forward(){
-  Serial.print("Forward! \n");
+  //Serial.print("Forward! \n");
   sethi();
   //delay(500);
   
@@ -59,18 +63,34 @@ void loop(){
   turn_right();
   delay(2000);
   stop();*/
-  int sensorStatus = digitalRead(IR1);
-  if (sensorStatus == 1) // Check if the pin high or not
+  
+  int sensorStatus_Left = digitalRead(IR_LEFT);
+  int sensorStatus_Right = digitalRead(IR_RIGHT);
+  if (sensorStatus_Left == 1) // Check if the pin high or not
   {
     // if the pin is high turn off the onboard Led
+    //reverse();
     digitalWrite(LED, LOW); // LED LOW
-    Serial.println("Motion Detected!"); // print Motion Detected! on the serial monitor window
-  }
+    Serial.println("LEFT CLIFF!"); // print Motion Detected! on the serial monitor window
+    reverse();
+    turn_right();
+    //delay(100);
+  } 
+  else if (sensorStatus_Right == 1)
+  {
+    digitalWrite(LED, LOW);
+    Serial.println("RIGHT CLIFF!");
+    reverse();
+    turn_left();
+  } 
   else  {
     //else turn on the onboard LED
     digitalWrite(LED, HIGH); // LED High
-    Serial.println("Motion Ended!"); // print Motion Ended! on the serial monitor window
+    Serial.println("LAND!"); // print Motion Ended! on the serial monitor window
+    forward();
+    //delay(100);
   }
+//delay(50);
 }
 
 
@@ -89,10 +109,11 @@ void loop(){
 
   }*/
 void reverse(){
-  Serial.print("Reverse! \n");
+  //Serial.print("Reverse! \n");
   sethi();
   digitalWrite(7, LOW);
   digitalWrite(8, LOW);
+  delay(100);
   //delay(500);
   //delay(10000);
 }
@@ -101,14 +122,14 @@ void turn_left(){
   Serial.print("Turning Left! \n");
   sethi();
   digitalWrite(8, LOW);
-  //delay(500);
+  delay(750);
 }
 
 void turn_right(){
   Serial.print("Turning Right! \n");
   sethi();
   digitalWrite(7, LOW);
-  //delay(500);
+  delay(750);
 }
 
 void stop(){
