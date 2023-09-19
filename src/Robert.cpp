@@ -12,7 +12,11 @@ the L293D chip
 #define DIRA 5
 #define DIRB 4
 
+
 int i;
+int IR1 = 10;
+int LED = 13;
+
 void turn_left();
 void turn_right();
 void reverse();
@@ -22,8 +26,10 @@ void sethi();
 void setup() {
   Serial.begin(9600);
   Serial.print("Start! \n");
+  pinMode(IR1, INPUT);
+  pinMode(LED, OUTPUT);
   //---set pin direction
-  sethi();
+  //sethi();
  
     
   
@@ -44,7 +50,7 @@ void forward(){
 }
 
 void loop(){
-  reverse();
+ /* reverse();
   delay(2000);
   forward();
   delay(2000);
@@ -52,9 +58,22 @@ void loop(){
   delay(2000);
   turn_right();
   delay(2000);
-  stop();
-
+  stop();*/
+  int sensorStatus = digitalRead(IR1);
+  if (sensorStatus == 1) // Check if the pin high or not
+  {
+    // if the pin is high turn off the onboard Led
+    digitalWrite(LED, LOW); // LED LOW
+    Serial.println("Motion Detected!"); // print Motion Detected! on the serial monitor window
+  }
+  else  {
+    //else turn on the onboard LED
+    digitalWrite(LED, HIGH); // LED High
+    Serial.println("Motion Ended!"); // print Motion Ended! on the serial monitor window
+  }
 }
+
+
 
 /*void loop(){
   for(i=0; i< 11; i++){
